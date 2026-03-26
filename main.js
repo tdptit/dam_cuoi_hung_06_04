@@ -833,7 +833,7 @@
             dataToSend.append('fullname', fullname);
             dataToSend.append('comment', comment);
 
-            fetch('LINK_GOOGLE_APP_SCRIPT_CUA_BAN', {
+            fetch('https://script.google.com/macros/s/AKfycbwlaqjFVwqJ_w0o7_rLVgSPir_4XmnZ3fbBERKc1BG7VAFkawoR6niGhaU8ePKFm9jZ/exec', {
               method: 'POST',
               body: dataToSend
             }).then(function() {
@@ -841,7 +841,7 @@
               if (!cache) cache = [];
               try { cache.unshift({ fullname: fullname, comment: comment }); } catch(_e) {}
               previewN = Math.max(previewN, 1);
-              toast('Đã gửi lời chúc thành công!', 'success');
+              if (window.showThankYouModal) window.showThankYouModal();
               renderAll();
             }).catch(function(e) {
               toast('Lỗi khi gửi lời chúc. Bạn vui lòng thử lại nhé!', 'error');
@@ -906,12 +906,12 @@
             dataToSend.append('eventName', eventName);
             dataToSend.append('message', message);
 
-            fetch('LINK_GOOGLE_APP_SCRIPT_CUA_BAN', {
+            fetch('https://script.google.com/macros/s/AKfycbwlaqjFVwqJ_w0o7_rLVgSPir_4XmnZ3fbBERKc1BG7VAFkawoR6niGhaU8ePKFm9jZ/exec', {
               method: 'POST',
               body: dataToSend
             }).then(function() {
               try { form.reset(); } catch(_e) {}
-              toast('Đã gửi xác nhận tham dự. Cảm ơn bạn!', 'success');
+              if (window.showThankYouModal) window.showThankYouModal();
             }).catch(function(e) {
               toast('Lỗi khi gửi xác nhận. Bạn vui lòng thử lại nhé!', 'error');
             });
@@ -1252,5 +1252,39 @@
         } catch(_e) {}
       }
     } catch(_e) {}
+  } catch(e) {}
+})();
+(function(){
+  try {
+    window.showThankYouModal = function() {
+      var modal = document.getElementById('miuThankYouModal');
+      var sheet = document.getElementById('miuThankYouSheet');
+      if (modal) {
+        modal.style.display = 'flex';
+        modal.setAttribute('aria-hidden', 'false');
+        setTimeout(function(){
+          modal.style.opacity = '1';
+          if (sheet) sheet.style.transform = 'translateY(0)';
+        }, 10);
+      }
+    };
+
+    window.hideThankYouModal = function() {
+      var modal = document.getElementById('miuThankYouModal');
+      var sheet = document.getElementById('miuThankYouSheet');
+      if (modal) {
+        modal.style.opacity = '0';
+        if (sheet) sheet.style.transform = 'translateY(20px)';
+        modal.setAttribute('aria-hidden', 'true');
+        setTimeout(function(){
+          modal.style.display = 'none';
+        }, 300);
+      }
+    };
+
+    var cBtn = document.getElementById('miuThankYouClose');
+    var bgBtn = document.getElementById('miuThankYouBackdrop');
+    if (cBtn) cBtn.addEventListener('click', window.hideThankYouModal, true);
+    if (bgBtn) bgBtn.addEventListener('click', window.hideThankYouModal, true);
   } catch(e) {}
 })();
