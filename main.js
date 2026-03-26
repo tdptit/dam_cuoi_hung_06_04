@@ -747,7 +747,7 @@
           try {
             var arr = (cache && cache.length) ? cache : [];
             if (!arr.length) {
-              listEl.innerHTML = '<div class="miu-wishes-empty">Chưa có lời chúc nào</div>';
+              listEl.innerHTML = '<div class="miu-wishes-empty" style="text-align: center; color: #8a7a70; font-style: italic; padding: 20px;">Hãy là người đầu tiên gửi những lời chúc ngọt ngào và chân thành nhất đến cô dâu, chú rể nhé!</div>';
               if (moreBtn) moreBtn.style.display = 'none';
               return;
             }
@@ -764,7 +764,7 @@
             if (!modalList) return;
             var arr = (cache && cache.length) ? cache : [];
             if (!arr.length) {
-              modalList.innerHTML = '<div class="miu-wishes-empty">Chưa có lời chúc nào</div>';
+              modalList.innerHTML = '<div class="miu-wishes-empty" style="text-align: center; color: #8a7a70; font-style: italic; padding: 20px;">Hãy là người đầu tiên gửi những lời chúc ngọt ngào và chân thành nhất đến cô dâu, chú rể nhé!</div>';
               if (modalMoreBtn) modalMoreBtn.style.display = 'none';
               return;
             }
@@ -785,16 +785,24 @@
             if (loading) return;
             if (cache && !force) { renderAll(); return; }
             loading = true;
-            // Simulate loading dummy data for static version
-            setTimeout(function() {
-              cache = [
-                { fullname: "Minh Phương", comment: "Chúc hai bạn trăm năm hạnh phúc, răng long đầu bạc nha!" },
-                { fullname: "Hoàng Anh", comment: "Chúc mừng hạnh phúc hai vợ chồng! Sớm sinh quý tử nhé!" },
-                { fullname: "Thùy Chi", comment: "Đám cưới tuyệt vời quá! Chúc mừng hai bạn!" }
-              ];
-              renderAll();
-              loading = false;
-            }, 500);
+            var scriptUrl = 'https://script.google.com/macros/s/AKfycbwlaqjFVwqJ_w0o7_rLVgSPir_4XmnZ3fbBERKc1BG7VAFkawoR6niGhaU8ePKFm9jZ/exec';
+            fetch(scriptUrl + '?action=getWishes')
+              .then(function(res) { return res.json(); })
+              .then(function(data) {
+                if (data && data.status === 'success' && data.data) {
+                  cache = data.data; // Mảng chứa {fullname: ..., comment: ...}
+                } else {
+                  if (!cache) cache = [];
+                }
+                renderAll();
+                loading = false;
+              })
+              .catch(function(e) {
+                console.log("Lỗi load wishes: ", e);
+                if (!cache) cache = [];
+                renderAll();
+                loading = false;
+              });
           } catch(e) {}
         };
 
@@ -827,24 +835,28 @@
             if (!fullname) { toast('Vui lòng nhập tên', 'error'); return; }
             if (!comment) { toast('Vui lòng nhập lời chúc', 'error'); return; }
             
-            // Gọi API Google Sheet
+            // Gửi API Background (Optimistic UI)
             var dataToSend = new URLSearchParams();
             dataToSend.append('type', 'wishes');
             dataToSend.append('fullname', fullname);
             dataToSend.append('comment', comment);
 
+            // Cập nhật giao diện ngay lập tức mà không chờ API
+            var formWrap = sec.querySelector('.miu-wishes-form-wrap');
+            var thanksMsg = sec.querySelector('.miu-wishes-thanks');
+            if (formWrap) formWrap.style.display = 'none';
+            if (thanksMsg) thanksMsg.style.display = 'block';
+
+            if (!cache) cache = [];
+            try { cache.unshift({ fullname: fullname, comment: comment }); } catch(_e) {}
+            previewN = Math.max(previewN, 1);
+            renderAll();
+
             fetch('https://script.google.com/macros/s/AKfycbwlaqjFVwqJ_w0o7_rLVgSPir_4XmnZ3fbBERKc1BG7VAFkawoR6niGhaU8ePKFm9jZ/exec', {
               method: 'POST',
               body: dataToSend
-            }).then(function() {
-              try { form.reset(); } catch(_e) {}
-              if (!cache) cache = [];
-              try { cache.unshift({ fullname: fullname, comment: comment }); } catch(_e) {}
-              previewN = Math.max(previewN, 1);
-              if (window.showThankYouModal) window.showThankYouModal();
-              renderAll();
             }).catch(function(e) {
-              toast('Lỗi khi gửi lời chúc. Bạn vui lòng thử lại nhé!', 'error');
+              console.log("Lỗi nền (Wishes): ", e);
             });
           } catch(e) {}
         }, true);
@@ -897,7 +909,7 @@
             var eventName = String(fd.get('eventName')||'').trim();
             var message = String(fd.get('message')||'').trim();
             if (!guestName) { toast('Vui lòng nhập họ tên', 'error'); return; }
-            // Gọi API Google Sheet
+            // Gọi API Google Sheet Background (Optimistic UI)
             var dataToSend = new URLSearchParams();
             dataToSend.append('type', 'rsvp');
             dataToSend.append('guestName', guestName);
@@ -906,14 +918,25 @@
             dataToSend.append('eventName', eventName);
             dataToSend.append('message', message);
 
+            // Cập nhật giao diện nội bộ (Inline Thanks)
+            var formWrap = sec.querySelector('.miu-rsvp-form-wrap');
+            var thanksMsg = sec.querySelector('.miu-rsvp-thanks');
+            var thanksTitle = sec.querySelector('.rsvp-thanks-title');
+            
+            if (formWrap) formWrap.style.display = 'none';
+            if (thanksMsg) thanksMsg.style.display = 'block';
+            if (thanksTitle) {
+              if (guestName) thanksTitle.textContent = 'Cảm ơn ' + guestName.trim() + '!';
+              else thanksTitle.textContent = 'Cảm ơn bạn!';
+            }
+
+            try { form.reset(); } catch(_e) {}
+
             fetch('https://script.google.com/macros/s/AKfycbwlaqjFVwqJ_w0o7_rLVgSPir_4XmnZ3fbBERKc1BG7VAFkawoR6niGhaU8ePKFm9jZ/exec', {
               method: 'POST',
               body: dataToSend
-            }).then(function() {
-              try { form.reset(); } catch(_e) {}
-              if (window.showThankYouModal) window.showThankYouModal();
             }).catch(function(e) {
-              toast('Lỗi khi gửi xác nhận. Bạn vui lòng thử lại nhé!', 'error');
+              console.log("Lỗi nền (RSVP): ", e);
             });
           } catch(e) {}
         }, true);
@@ -1256,9 +1279,17 @@
 })();
 (function(){
   try {
-    window.showThankYouModal = function() {
+    window.showThankYouModal = function(name) {
       var modal = document.getElementById('miuThankYouModal');
       var sheet = document.getElementById('miuThankYouSheet');
+      var title = document.getElementById('miuThankYouTitle');
+      if (title) {
+        if (name) {
+          title.textContent = 'Cảm ơn ' + name.trim() + '!';
+        } else {
+          title.textContent = 'Cảm ơn bạn rất nhiều!';
+        }
+      }
       if (modal) {
         modal.style.display = 'flex';
         modal.setAttribute('aria-hidden', 'false');
