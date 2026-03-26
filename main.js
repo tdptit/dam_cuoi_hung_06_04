@@ -827,15 +827,25 @@
             if (!fullname) { toast('Vui lòng nhập tên', 'error'); return; }
             if (!comment) { toast('Vui lòng nhập lời chúc', 'error'); return; }
             
-            // Static implementation: just add to local cache
-            setTimeout(function() {
+            // Gọi API Google Sheet
+            var dataToSend = new URLSearchParams();
+            dataToSend.append('type', 'wishes');
+            dataToSend.append('fullname', fullname);
+            dataToSend.append('comment', comment);
+
+            fetch('LINK_GOOGLE_APP_SCRIPT_CUA_BAN', {
+              method: 'POST',
+              body: dataToSend
+            }).then(function() {
               try { form.reset(); } catch(_e) {}
               if (!cache) cache = [];
               try { cache.unshift({ fullname: fullname, comment: comment }); } catch(_e) {}
               previewN = Math.max(previewN, 1);
-              toast('Đã gửi lời chúc!', 'success');
+              toast('Đã gửi lời chúc thành công!', 'success');
               renderAll();
-            }, 300);
+            }).catch(function(e) {
+              toast('Lỗi khi gửi lời chúc. Bạn vui lòng thử lại nhé!', 'error');
+            });
           } catch(e) {}
         }, true);
 
@@ -887,10 +897,24 @@
             var eventName = String(fd.get('eventName')||'').trim();
             var message = String(fd.get('message')||'').trim();
             if (!guestName) { toast('Vui lòng nhập họ tên', 'error'); return; }
-            setTimeout(function() {
+            // Gọi API Google Sheet
+            var dataToSend = new URLSearchParams();
+            dataToSend.append('type', 'rsvp');
+            dataToSend.append('guestName', guestName);
+            dataToSend.append('willAttend', willAttend ? 'Có' : 'Không');
+            dataToSend.append('eventType', eventType);
+            dataToSend.append('eventName', eventName);
+            dataToSend.append('message', message);
+
+            fetch('LINK_GOOGLE_APP_SCRIPT_CUA_BAN', {
+              method: 'POST',
+              body: dataToSend
+            }).then(function() {
               try { form.reset(); } catch(_e) {}
-              toast('Đã gửi xác nhận. Cảm ơn bạn!', 'success');
-            }, 300);
+              toast('Đã gửi xác nhận tham dự. Cảm ơn bạn!', 'success');
+            }).catch(function(e) {
+              toast('Lỗi khi gửi xác nhận. Bạn vui lòng thử lại nhé!', 'error');
+            });
           } catch(e) {}
         }, true);
       } catch(e) {}
