@@ -681,20 +681,20 @@
   </div>
   <div id="miuGiftModal" aria-hidden="true">
     <div id="miuGiftBackdrop"></div>
-    <div id="miuGiftSheet" role="dialog" aria-modal="true" style="padding: 20px;">
-      <div class="hd">
-        <div class="miu-style-168" style="font-family: Lora, serif; font-size: 24px; font-weight: bold; color: #4e3629;">Quà mừng cưới</div>
-        <button id="miuGiftClose" type="button" style="background:transparent; border:none; font-size:24px; cursor:pointer;">×</button>
-      </div>
-      <div class="bd" style="padding-top: 20px;">
-        <div class="miuGiftQr" style="display: flex; gap: 15px; flex-wrap: nowrap; justify-content: center; align-items: center; align-content: center; overflow: hidden;">
-          <div style="text-align: center;">
-            <img src="qr/trai.jfif" alt="QR" style="width: 130px; border-radius: 12px; border: 1px solid #ddd; padding: 8px;">
-          </div>
-          <div style="text-align: center;">
-            <img src="qr/gai.jfif" alt="QR" style="width: 130px; border-radius: 12px; border: 1px solid #ddd; padding: 8px;">
-          </div>
-        </div>
+    <div id="miuGiftSheet" role="dialog" aria-modal="true" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) !important; background: #fafaf8; width: 85%; max-width: 440px; border-radius: 20px; padding: 40px 15px 30px; text-align: center; box-shadow: 0 15px 40px rgba(0,0,0,0.15); margin: 0;">
+      <button id="miuGiftClose" type="button" style="position: absolute; right: 15px; top: 15px; background: rgba(0,0,0,0.05); border: none; font-size: 24px; cursor: pointer; color: #999; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; line-height: 1; transition: background 0.2s;">×</button>
+      
+      <div style="font-size: 40px; margin-bottom: 15px;">🎁</div>
+      <h2 style="font-family: Lora, Georgia, serif; font-size: 26px; color: #4e3629; margin: 0 0 10px; font-weight: 700;">Quà Mừng Cưới</h2>
+      <p style="font-family: Lora, Georgia, serif; font-size: 14px; color: #8a7a70; margin: 0 auto 20px; line-height: 1.5; max-width: 280px;">Sự hiện diện của bạn đã là món quà tuyệt vời nhất. Xin chân thành cảm ơn!</p>
+      
+      <div class="miuGiftQr" style="display: flex; gap: 15px; flex-wrap: nowrap; justify-content: center; align-items: center; background: #fff; padding: 15px; border-radius: 16px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 5px 15px rgba(0,0,0,0.02);">
+        <a href="qr/trai.jfif" target="_blank" title="Mở ảnh QR" style="display: block;">
+          <img src="qr/trai.jfif" alt="QR Nhà Trai" style="width: 135px; height: 135px; object-fit: contain; border-radius: 12px; border: 1px dashed #e2d9cd; padding: 4px; background: #fff; cursor: pointer;">
+        </a>
+        <a href="qr/gai.jfif" target="_blank" title="Mở ảnh QR" style="display: block;">
+          <img src="qr/gai.jfif" alt="QR Nhà Gái" style="width: 135px; height: 135px; object-fit: contain; border-radius: 12px; border: 1px dashed #e2d9cd; padding: 4px; background: #fff; cursor: pointer;">
+        </a>
       </div>
     </div>
   </div>
