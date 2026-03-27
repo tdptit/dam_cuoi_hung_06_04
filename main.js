@@ -713,43 +713,53 @@
         var listEl = sec.querySelector('[data-miu-wishes-list="1"][data-miu-wishes-id="' + id.replace(/"/g,'\"') + '"]');
         var form = sec.querySelector('[data-miu-wishes-form="1"][data-miu-wishes-id="' + id.replace(/"/g,'\"') + '"]');
         var moreBtn = sec.querySelector('[data-miu-wishes-more="1"][data-miu-wishes-id="' + id.replace(/"/g,'\"') + '"]');
-        var modal = sec.querySelector('[data-miu-wishes-modal="1"][data-miu-wishes-id="' + id.replace(/"/g,'\"') + '"]');
-        var modalList = sec.querySelector('[data-miu-wishes-modal-list="1"][data-miu-wishes-id="' + id.replace(/"/g,'\"') + '"]');
-        var modalMoreBtn = sec.querySelector('[data-miu-wishes-modal-more="1"][data-miu-wishes-id="' + id.replace(/"/g,'\"') + '"]');
-        var modalCloseBtns = sec.querySelectorAll('[data-miu-wishes-close="1"][data-miu-wishes-id="' + id.replace(/"/g,'\"') + '"]');
+        var modal = document.querySelector('[data-miu-wishes-modal="1"][data-miu-wishes-id="' + id.replace(/"/g,'\"') + '"]');
+        var modalList = document.querySelector('[data-miu-wishes-modal-list="1"][data-miu-wishes-id="' + id.replace(/"/g,'\"') + '"]');
+        var modalMoreBtn = document.querySelector('[data-miu-wishes-modal-more="1"][data-miu-wishes-id="' + id.replace(/"/g,'\"') + '"]');
+        var modalCloseBtns = document.querySelectorAll('[data-miu-wishes-close="1"][data-miu-wishes-id="' + id.replace(/"/g,'\"') + '"]');
         if (!listEl || !form) return;
 
         var initial = parseInt(sec.getAttribute('data-initial-limit') || '3', 10);
         if (!isFinite(initial) || initial < 1) initial = 3;
         // Keep the section compact: preview max 3, full list lives in modal.
         var previewN = Math.max(1, Math.min(3, initial));
-        var modalShowN = Math.max(10, initial * 4);
+        var modalShowN = 500;
         var cache = null;
         var loading = false;
 
         var setModalOpen = function(open){
           try {
+            if (modal) modal.setAttribute('data-open', open ? '1' : '0');
             sec.setAttribute('data-miu-modal-open', open ? '1' : '0');
             if (modal) modal.setAttribute('aria-hidden', open ? 'false' : 'true');
-            if (open) document.body.classList.add('miu-no-scroll');
-            else document.body.classList.remove('miu-no-scroll');
+            if (open) {
+              document.documentElement.classList.add('miu-no-scroll');
+              document.body.classList.add('miu-no-scroll');
+            } else {
+              document.documentElement.classList.remove('miu-no-scroll');
+              document.body.classList.remove('miu-no-scroll');
+            }
           } catch(e) {}
         };
 
         var renderItems = function(arr, limit){
           try {
-            var out = '';
-            for (var i=0;i<Math.min(limit, arr.length);i++) {
-              var w = arr[i] || {};
-              out += '<div class="miu-wishes-item">'
-                + '<div class="miu-wishes-name">' + esc(w.fullname||'') + '</div>'
-                + '<div class="miu-wishes-comment">' + esc(w.comment||'') + '</div>'
-                + '</div>';
+            if (!arr || !arr.length) return '<div class="miu-wishes-empty">Chưa có lời chúc nào.</div>';
+            var n = Math.min(arr.length, limit || 999);
+            var h = '';
+            for (var i=0; i<n; i++) {
+              var name = (arr[i].fullname || 'Ẩn danh').trim();
+              var initial = name.charAt(0).toUpperCase();
+              h += '<div class="miu-wishes-item">' +
+                     '<div class="miu-wishes-item-head">' +
+                       '<div class="miu-wishes-avatar">' + esc(initial) + '</div>' +
+                       '<div class="miu-wishes-item-name">' + esc(name) + '</div>' +
+                     '</div>' +
+                     '<div class="miu-wishes-item-comment">' + esc(arr[i].comment || '') + '</div>' +
+                   '</div>';
             }
-            return out;
-          } catch(e) {
-            return '';
-          }
+            return h;
+          } catch(e) { return ''; }
         };
 
         var renderPreview = function(){
@@ -827,17 +837,12 @@
           }, true);
         }
 
-        if (modalCloseBtns && modalCloseBtns.length) {
-          for (var k=0; k<modalCloseBtns.length; k++) {
-          modalCloseBtns[k].addEventListener('click', function(e){
-            if (e.target.hasAttribute('data-miu-wishes-close') || e.target.classList.contains('miu-wishes-backdrop')) {
+        if (modal) {
+          modal.addEventListener('click', function(e){
+            if (e.target === modal || e.target.hasAttribute('data-miu-wishes-close') || e.target.classList.contains('miu-wishes-backdrop')) {
               setModalOpen(false);
             }
           }, true);
-        }
-        // Ensure backdrop specifically works
-        var bdrop = sec.querySelector('.miu-wishes-backdrop');
-        if (bdrop) bdrop.addEventListener('click', function(){ setModalOpen(false); }, true);
         }
 
         form.addEventListener('submit', function(ev){
