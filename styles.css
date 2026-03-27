@@ -421,7 +421,6 @@ body {
   padding: 16px;
   background: #fff;
   border-radius: 14px;
-  border: 1px solid rgba(203, 173, 143, 0.2);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
   margin-bottom: 12px;
   transition: transform 0.2s ease;
@@ -3093,10 +3092,10 @@ body {
 
 [data-node-id="element_image_6nkef5oenjx"] {
   position: absolute;
-  left: -8.162425505809292px;
-  top: 5468.235587486854px;
-  width: 581.4580829326923px;
-  height: 6326.801174px;
+  left: -8px;
+  top: 5700px;
+  width: 581px;
+  height: 6326px;
   z-index: 0;
   opacity: 1;
   --miu-node-rotate: 0deg;
@@ -4827,7 +4826,7 @@ body {
 }
 
 .miu-style-153 {
-  background: rgba(255, 255, 255, 0.6);
+  background: transparent;
   border-radius: 12px;
   overflow: hidden;
 }
