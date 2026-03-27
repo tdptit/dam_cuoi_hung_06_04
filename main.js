@@ -828,11 +828,16 @@
         }
 
         if (modalCloseBtns && modalCloseBtns.length) {
-          for (var cc=0; cc<modalCloseBtns.length; cc++) {
-            modalCloseBtns[cc].addEventListener('click', function(){
-              try { setModalOpen(false); } catch(e) {}
-            }, true);
-          }
+          for (var k=0; k<modalCloseBtns.length; k++) {
+          modalCloseBtns[k].addEventListener('click', function(e){
+            if (e.target.hasAttribute('data-miu-wishes-close') || e.target.classList.contains('miu-wishes-backdrop')) {
+              setModalOpen(false);
+            }
+          }, true);
+        }
+        // Ensure backdrop specifically works
+        var bdrop = sec.querySelector('.miu-wishes-backdrop');
+        if (bdrop) bdrop.addEventListener('click', function(){ setModalOpen(false); }, true);
         }
 
         form.addEventListener('submit', function(ev){
