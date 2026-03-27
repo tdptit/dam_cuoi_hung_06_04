@@ -8,6 +8,12 @@ body {
   padding: 0;
 }
 
+body.miu-no-scroll {
+  overflow: hidden !important;
+  touch-action: none;
+  -webkit-overflow-scrolling: none;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
   text-rendering: optimizeLegibility;
@@ -298,10 +304,13 @@ body {
   inset: 0;
   z-index: 10000;
   display: none;
+  overscroll-behavior: none;
 }
 
 #miuGiftModal[data-open="1"] {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #miuGiftBackdrop {
@@ -311,16 +320,16 @@ body {
 }
 
 #miuGiftSheet {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  position: relative;
+  width: 85%;
+  max-width: 440px;
   max-height: 85vh;
-  background: #fff;
-  border-top-left-radius: 16px;
-  border-top-right-radius: 16px;
+  background: #fafaf8;
+  border-radius: 20px;
+  padding: 40px 15px 30px;
+  text-align: center;
   overflow: auto;
-  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
 }
 
 #miuGiftSheet .hd {

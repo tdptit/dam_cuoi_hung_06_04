@@ -632,8 +632,15 @@
     if (!btn || !modal) return;
     var setOpen = function(v){
       try {
-        if (v) { modal.setAttribute('data-open','1'); modal.setAttribute('aria-hidden','false'); }
-        else { modal.removeAttribute('data-open'); modal.setAttribute('aria-hidden','true'); }
+        if (v) {
+          modal.setAttribute('data-open','1');
+          modal.setAttribute('aria-hidden','false');
+          document.body.classList.add('miu-no-scroll');
+        } else {
+          modal.removeAttribute('data-open');
+          modal.setAttribute('aria-hidden','true');
+          document.body.classList.remove('miu-no-scroll');
+        }
       } catch(e) {}
     };
     btn.addEventListener('click', function(){ setOpen(true); }, true);
