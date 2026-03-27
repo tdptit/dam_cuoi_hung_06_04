@@ -731,6 +731,8 @@
           try {
             sec.setAttribute('data-miu-modal-open', open ? '1' : '0');
             if (modal) modal.setAttribute('aria-hidden', open ? 'false' : 'true');
+            if (open) document.body.classList.add('miu-no-scroll');
+            else document.body.classList.remove('miu-no-scroll');
           } catch(e) {}
         };
 

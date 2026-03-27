@@ -476,7 +476,9 @@ body {
   background: #fff;
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.25);
 }
 
@@ -493,6 +495,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  overflow-y: auto;
+  flex: 1;
 }
 
 [data-miu-wishes="1"] .miu-wishes-close {
